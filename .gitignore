@@ -1,0 +1,5 @@
+# Venv
+venv/
+
+# Compiled Python
+__pycache__/
