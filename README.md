@@ -4,7 +4,7 @@ Look up Common Vulnerabilities and Exposures (CVE for short) and get details abo
 # Install
 #### From PyPi
 ```sh
-pip3 install cve-lookup
+pip3 install cve_lookup
 ```
 
 #### From GitHub
@@ -19,4 +19,3 @@ python3 setup.py install
 
 - Python3
 - An internet connection (You probably have one)
-

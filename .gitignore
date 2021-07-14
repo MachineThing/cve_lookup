@@ -3,3 +3,8 @@ venv/
 
 # Compiled Python
 __pycache__/
+
+# Dist/Build
+build/
+dist/
+cve_lookup.egg-info
