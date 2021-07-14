@@ -9,4 +9,15 @@ setup(name='cve_lookup',
       license='MIT',
       packages=['cve_lookup'],
       zip_safe=False,
+      classifiers=[
+        'Operating System :: OS Independent',
+        'License :: OSI Approved :: MIT License',
+        'Intended Audience :: Developers',
+        ''
+      ],
+      python_requires='>3.8',
+      install_requires=[
+        'beautifulsoup4',
+        'requests'
+      ]
 )

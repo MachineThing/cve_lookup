@@ -1,1 +1,6 @@
+# Dependencies
+beautifulsoup4
+requests
+
+# Setup
 setuptools
