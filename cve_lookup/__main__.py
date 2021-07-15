@@ -1,6 +1,6 @@
-from . import get_cve
+from . import cve
 
-heartbleed = get_cve.cve("CVE-2014-0160")
+heartbleed = cve.cve("CVE-2014-0160")
 print(heartbleed.id)
 print(heartbleed.cvss3)
 print(heartbleed.cvss2)

@@ -22,5 +22,5 @@ class cve():
                 return nvd_html.find(attrs={"id":id}).string
 
         self.id = _get_id("page-header-vuln-id")
-        self.cvss3 = _get_id("Cvss3NistCalculatorAnchor", testid=False)
-        self.cvss2 = _get_id("Cvss2CalculatorAnchor", testid=False)
+        self.cvss3 = _get_id("vuln-cvss3-nist-vector")
+        self.cvss2 = _get_id("vuln-cvss2-panel-vector")
