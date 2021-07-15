@@ -1,6 +1,31 @@
-class cvss_vector:
-    def __init__(self):
-        pass
+class cvss2_vector:
+    _version = 2
+
+    vector = {}
+    vector_txt = None
+
+    # -- Scores --
+    # Base Scores
+    score_base = 0.0
+    score_impact = 0.0
+    score_exploitability = 0.0
+
+    # Temporal Score
+    score_temporal = 0.0
+
+    # Environmental Scores
+    score_environmental = 0.0
+    score_modified_impact = 0.0
+
+    # Overall Score
+    score_overall = 0.0
+    def __init__(self, vector):
+        self.vector_txt = vector
+        vector_list = self.vector_txt.split('/')
+        for vectors in vector_list:
+            vectorsp = vectors.split(':')
+            self.vector[vectorsp[0]] = vectorsp[1]
+
 
 def gen_cvss(vector, cvss_version=None):
     if cvss_version == None:
