@@ -1,8 +1,11 @@
 from bs4 import BeautifulSoup
 import requests
+from . import vector
 
 class cve():
     id = None
+    cvss3v = None
+    cvss2v = None
     cvss3 = None
     cvss2 = None
 
@@ -22,5 +25,6 @@ class cve():
                 return nvd_html.find(attrs={"id":id}).string
 
         self.id = _get_id("page-header-vuln-id")
-        self.cvss3 = _get_id("vuln-cvss3-nist-vector")
-        self.cvss2 = _get_id("vuln-cvss2-panel-vector")
+        self.cvss3v = _get_id("vuln-cvss3-nist-vector")
+        self.cvss2v = _get_id("vuln-cvss2-panel-vector")
+        self.cvss2 = vector.cvss2_vector(self.cvss2v)

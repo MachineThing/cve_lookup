@@ -61,7 +61,11 @@ class cvss2_vector:
 
     def __init__(self, vector):
         # Initialization
-        self.vector_txt = vector
+
+        if vector[0] == '(':
+            self.vector_txt = vector[1:-1]
+        else:
+            self.vector_txt = vector
         vector_list = self.vector_txt.split('/')
         for vectors in vector_list:
             vectorsp = vectors.split(':')
