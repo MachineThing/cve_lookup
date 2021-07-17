@@ -28,7 +28,7 @@ class TestBaseScore(unittest.TestCase): # Base metrics only
 
 class TestTemporalScore(unittest.TestCase): # Base and Temporal metrics only
     def test_score_1(self):
-        self.assertEqual(round(cvss2_vector('AV:N/AC:H/Au:S/C:P/I:N/A:C/E:U/RL:U/RC:UR').score_overall, 1), 4.0)
+        self.assertEqual(round(cvss2_vector('AV:N/AC:H/Au:S/C:P/I:N/A:C/E:U/RL:U/RC:UR').score_overall, 1), 4.5)
 
     def test_score_2(self):
         self.assertEqual(round(cvss2_vector('(AV:N/AC:L/Au:N/C:C/I:C/A:C/E:U/RL:W/RC:UR)').score_overall, 1), 7.7)

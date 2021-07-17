@@ -55,9 +55,17 @@ class cvss2_vector:
             fimpact = 1.176
         self.score_base = (.6*self.score_impact+.4*self.score_exploitability-1.5)*fimpact
 
+    def calculate_temporal(self):
+        exploitability = self.score_case('E', self.vector, {'ND':1, 'U':0.85, 'POC':0.9, 'F':0.95, 'H':1})
+        remediation_level = self.score_case('RL', self.vector, {'ND':1, 'OF':0.87, 'TF':0.9, 'W':0.95, 'U':1})
+        report_confidence = self.score_case('RC', self.vector, {'ND':1, 'UC':0.9, 'UR':0.95, 'C':1})
+        self.score_temporal = self.score_base * exploitability * remediation_level * report_confidence
+
     def calculate_overall(self):
+        # Calculate all scores and the overall score
         self.calculate_base()
-        self.score_overall = self.score_base
+        self.calculate_temporal()
+        self.score_overall = self.score_temporal
 
     def __init__(self, vector):
         # Initialization
