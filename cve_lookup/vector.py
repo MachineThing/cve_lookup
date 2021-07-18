@@ -1,3 +1,7 @@
+# Equations from:
+# https://nvd.nist.gov/vuln-metrics/cvss/v2-calculator/equations
+# (As if 7/17/2021)
+
 class InvalidVectorValue(ValueError):
     def __init__(self, vector, vector_list, message=None):
         bad_value = vector_list[vector]
@@ -12,63 +16,75 @@ class InvalidVectorValue(ValueError):
 class cvss2_vector:
     _version = 2
 
-    vector = {'AV':None, 'AC':None, 'Au':None, 'C':None, 'I':None, 'A':None, 'E':'ND', 'RL':'ND', 'RC':'ND', 'CDP':'ND', 'TD':'ND', 'CR':'ND', 'IR':'ND', 'AR':'ND'}
-    vector_txt = None
-
-    # -- Scores --
-    # Base Scores
-    score_base = 0.0
-    score_impact = 0.0
-    score_exploitability = 0.0
-
-    # Temporal Score
-    score_temporal = 0.0
-
-    # Environmental Scores
-    score_environmental = 0.0
-    score_modified_impact = 0.0
-
-    # Overall Score
-    score_overall = 0.0
-    score_name = ""
-
-    def score_case(self, vector, vector_list, values):
+    def score_case(self, vector, values):
         # Basically a switch case statement, Python 3.10 implements something simular but this exists for compatibility purposes with older Python versions
         for case in values:
-            if vector_list[vector] == case:
+            if self.vector[vector] == case:
                 return values[case]
-        raise InvalidVectorValue(vector, vector_list)
+        raise InvalidVectorValue(vector, self.vector)
 
     def calculate_base(self):
         # Base score calculation
-        access_vector = self.score_case('AV', self.vector, {'L':0.395, 'A':0.646, 'N':1})
-        access_complexity = self.score_case('AC', self.vector, {'H':0.35, 'M':0.61, 'L':0.71})
-        authentication = self.score_case('Au', self.vector, {'M':0.45, 'S':0.56, 'N':0.704})
-        confidentality_impact = self.score_case('C', self.vector, {'N':0, 'P':0.275, 'C':0.660})
-        integrity_impact = self.score_case('I', self.vector, {'N':0, 'P':0.275, 'C':0.660})
-        availability_impact = self.score_case('A', self.vector, {'N':0, 'P':0.275, 'C':0.660})
+        access_vector = self.score_case('AV', {'L':0.395, 'A':0.646, 'N':1})
+        access_complexity = self.score_case('AC', {'H':0.35, 'M':0.61, 'L':0.71})
+        authentication = self.score_case('Au', {'M':0.45, 'S':0.56, 'N':0.704})
+        confidentality_impact = self.score_case('C', {'N':0, 'P':0.275, 'C':0.660})
+        integrity_impact = self.score_case('I', {'N':0, 'P':0.275, 'C':0.660})
+        availability_impact = self.score_case('A', {'N':0, 'P':0.275, 'C':0.660})
 
         self.score_impact = 10.41 * (1 - (1 - confidentality_impact) * (1 - integrity_impact) * (1 - availability_impact))
         self.score_exploitability = 20 * access_complexity * authentication * access_vector
         fimpact = 0
         if self.score_impact != 0:
             fimpact = 1.176
-        self.score_base = (.6*self.score_impact+.4*self.score_exploitability-1.5)*fimpact
+        return (.6*self.score_impact+.4*self.score_exploitability-1.5)*fimpact
 
-    def calculate_temporal(self):
-        exploitability = self.score_case('E', self.vector, {'ND':1, 'U':0.85, 'POC':0.9, 'F':0.95, 'H':1})
-        remediation_level = self.score_case('RL', self.vector, {'ND':1, 'OF':0.87, 'TF':0.9, 'W':0.95, 'U':1})
-        report_confidence = self.score_case('RC', self.vector, {'ND':1, 'UC':0.9, 'UR':0.95, 'C':1})
-        self.score_temporal = self.score_base * exploitability * remediation_level * report_confidence
+    def calculate_temporal(self, score_base):
+        exploitability = self.score_case('E', {'ND':1, 'U':0.85, 'POC':0.9, 'F':0.95, 'H':1})
+        remediation_level = self.score_case('RL', {'ND':1, 'OF':0.87, 'TF':0.9, 'W':0.95, 'U':1})
+        report_confidence = self.score_case('RC', {'ND':1, 'UC':0.9, 'UR':0.95, 'C':1})
+        return score_base * exploitability * remediation_level * report_confidence
+
+    def calculate_environment(self):
+        collateral_damage_potential = self.score_case('CDP', {'ND':0, 'N':0, 'L':0.1, 'LM':0.3, 'MH':0.4, 'H':0.5})
+        target_distribution = self.score_case('TD', {'ND':1, 'N':0, 'L':0.25, 'M':0.75, 'H':1})
+
+        confidentality_requirement = self.score_case('CR', {'ND':1, 'L':0.5, 'M':1, 'H':1.51})
+        integrity_requirement = self.score_case('IR', {'ND':1, 'L':0.5, 'M':1, 'H':1.51})
+        availability_requirement = self.score_case('AR', {'ND':1, 'L':0.5, 'M':1, 'H':1.51})
+
+        # The three variables below this comment is from the Base Score Metrics but are needed for this equation
+        confidentality_impact = self.score_case('C', {'N':0, 'P':0.275, 'C':0.660})
+        integrity_impact = self.score_case('I', {'N':0, 'P':0.275, 'C':0.660})
+        availability_impact = self.score_case('A', {'N':0, 'P':0.275, 'C':0.660})
+
+        self.modified_impact = min(10, 10.41 * (1 -
+                                                 (1 - confidentality_impact * confidentality_requirement)
+                                               * (1 - integrity_impact * integrity_requirement)
+                                               * (1- availability_impact * availability_requirement)))
+
+        # "modified_temporal" is the Temporal Score recomputed with the impact sub-equation replaced with the "modified_impact" variable
+        fimpact = 0
+        if self.score_impact != 0:
+            fimpact = 1.176
+        modified_temporal = self.calculate_temporal((.6*self.modified_impact+.4*self.score_exploitability-1.5)*fimpact)
+        return (modified_temporal + (10 - modified_temporal) * collateral_damage_potential) * target_distribution
 
     def calculate_overall(self):
-        # Calculate all scores and the overall score
-        self.calculate_base()
-        self.calculate_temporal()
-        self.score_overall = self.score_temporal
+        # Calculate all scores (if needed) and the overall score
+        self.score_base = self.calculate_base()
+        if self.vector['CDP'] != 'ND' or self.vector['TD'] != 'ND' or self.vector['CR'] != 'ND' or self.vector['IR'] != 'ND' or self.vector['AR'] != 'ND':
+            self.score_overall = self.calculate_environment()
+        elif self.vector['E'] != 'ND' or self.vector['RL'] != 'ND' or self.vector['RC'] != 'ND':
+            self.score_overall = self.calculate_temporal(self.score_base)
+        else:
+            self.score_overall = self.score_base
 
     def __init__(self, vector):
         # Initialization
+
+        # Initialize vector here
+        self.vector = {'AV':None, 'AC':None, 'Au':None, 'C':None, 'I':None, 'A':None, 'E':'ND', 'RL':'ND', 'RC':'ND', 'CDP':'ND', 'TD':'ND', 'CR':'ND', 'IR':'ND', 'AR':'ND'}
 
         if vector[0] == '(':
             self.vector_txt = vector[1:-1]

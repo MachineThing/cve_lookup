@@ -53,7 +53,7 @@ class TestEnvironmentalScore(unittest.TestCase): # Base and Environmental metric
         self.assertEqual(round(cvss2_vector('(AV:N/AC:M/Au:S/C:N/I:P/A:N/CDP:H/TD:M/CR:ND/IR:H/AR:ND)').score_overall, 1), 5.4)
 
     def test_score_4(self): # Above but without "Not Defined" modifiers
-        self.assertEqual(round(cvss2_vector('(AV:N/AC:M/Au:S/C:N/I:P/A:N/CDP:H/TD:M/IR:H)').score_overall, 1), 7.9)
+        self.assertEqual(round(cvss2_vector('(AV:N/AC:M/Au:S/C:N/I:P/A:N/CDP:H/TD:M/IR:H)').score_overall, 1), 5.4)
 
 class TestComboScore(unittest.TestCase): # All metrics
     def test_score_1(self):
@@ -67,3 +67,6 @@ class TestComboScore(unittest.TestCase): # All metrics
 
     def test_score_4(self): # Above but without "Not Defined" modifiers
         self.assertEqual(round(cvss2_vector('(AV:A/AC:M/Au:N/C:N/I:C/A:C/E:H/RC:C/TD:H/IR:H/AR:H)').score_overall, 1), 7.9)
+
+if __name__ == '__main__':
+    unittest.main()
