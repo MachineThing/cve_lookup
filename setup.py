@@ -3,11 +3,11 @@ import pathlib
 long_description = (pathlib.Path(__file__).parent/'README.md').read_text(encoding='utf-8')
 
 setup(name='cve_lookup',
-      version='0.0.1',
+      version='0.0.2',
       description='Look up CVEs and get details about them.',
       long_description=long_description,
       long_description_content_type='text/markdown',
-      url='https://github.com/machinething/cve_lookup',
+      #url='https://github.com/machinething/cve_lookup',
       author='MachineThing',
       #author_email='N/A',
       license='MIT',

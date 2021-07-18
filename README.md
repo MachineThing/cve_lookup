@@ -1,4 +1,6 @@
 # CVE Lookup
+![Version](https://img.shields.io/pypi/v/cve-lookup) ![Downloads](https://img.shields.io/pypi/dm/cve-lookup) ![MIT License](https://img.shields.io/pypi/l/cve-lookup) ![Language percent](https://img.shields.io/github/languages/top/Machinething/cve_lookup)
+
 Look up Common Vulnerabilities and Exposures (CVE for short) and get details about them.
 
 # How to use
