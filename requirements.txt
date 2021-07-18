@@ -4,3 +4,4 @@ requests
 
 # Setup
 setuptools
+build
