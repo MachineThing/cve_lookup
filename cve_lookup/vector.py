@@ -74,11 +74,10 @@ class cvss2_vector:
         # Calculate all scores (if needed) and the overall score
         self.score_base = self.calculate_base()
         if self.vector['CDP'] != 'ND' or self.vector['TD'] != 'ND' or self.vector['CR'] != 'ND' or self.vector['IR'] != 'ND' or self.vector['AR'] != 'ND':
-            self.score_overall = self.calculate_environment()
-        elif self.vector['E'] != 'ND' or self.vector['RL'] != 'ND' or self.vector['RC'] != 'ND':
-            self.score_overall = self.calculate_temporal(self.score_base)
-        else:
-            self.score_overall = self.score_base
+            return self.calculate_environment()
+        if self.vector['E'] != 'ND' or self.vector['RL'] != 'ND' or self.vector['RC'] != 'ND':
+            return self.calculate_temporal(self.score_base)
+        return self.score_base
 
     def __init__(self, vector):
         # Initialization
@@ -94,9 +93,13 @@ class cvss2_vector:
         for vectors in vector_list:
             vectorsp = vectors.split(':')
             self.vector[vectorsp[0]] = vectorsp[1]
-        self.calculate_overall()
-
-
+        self.score_overall = max(0, min(10, self.calculate_overall()))
+        if self.score_overall >= 7:
+            self.score_name = "High"
+        elif self.score_overall >= 4:
+            self.score_name = "Medium"
+        else:
+            self.score_name = "Low"
 
 def gen_cvss(vector, cvss_version=None):
     if cvss_version == None:
