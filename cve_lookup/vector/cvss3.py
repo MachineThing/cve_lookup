@@ -1,3 +1,9 @@
+# Equations from:
+# https://nvd.nist.gov/vuln-metrics/cvss/v3-calculator/v30/equations
+# Metric levels from:
+# https://www.first.org/cvss/v3.0/specification-document#8-4-Metrics-Levels
+# (As if 7/26/2021)
+
 from math import ceil
 from . import exceptions
 from . import cvss2
@@ -54,15 +60,6 @@ class cvss3_vector(cvss2.cvss2_vector):
         modified_temporal = self.calculate_temporal((.6*self.modified_impact+.4*self.score_exploitability-1.5)*fimpact)
         return (modified_temporal + (10 - modified_temporal) * collateral_damage_potential) * target_distribution
 
-    def calculate_overall(self):
-        # Calculate all scores (if needed) and the overall score
-        self.score_base = self.calculate_base()
-        if self.vector['CDP'] != 'ND' or self.vector['TD'] != 'ND' or self.vector['CR'] != 'ND' or self.vector['IR'] != 'ND' or self.vector['AR'] != 'ND':
-            return self.calculate_environment()
-        if self.vector['E'] != 'ND' or self.vector['RL'] != 'ND' or self.vector['RC'] != 'ND':
-            return self.calculate_temporal(self.score_base)
-        return self.score_base
-
     def __init__(self, vector):
         # Initialization
 
@@ -76,8 +73,8 @@ class cvss3_vector(cvss2.cvss2_vector):
             vectorsp = vectors.split(':')
             self.vector[vectorsp[0]] = vectorsp[1]
 
-
-        self.score_overall = max(0, min(10, self.calculate_overall()))
+        # Use the inherited calculate_overall method to calculate the overall score
+        self.score_overall = max(0, min(10, self.calculate_overall(['CDP', 'TD', 'CR', 'IR', 'AR'], ['E', 'RL', 'RC'])))
         if self.score_overall >= 9.0:
             self.score_name = "Critical"
         elif self.score_name >= 7.0:

@@ -61,13 +61,18 @@ class cvss2_vector:
         modified_temporal = self.calculate_temporal((.6*self.modified_impact+.4*self.score_exploitability-1.5)*fimpact)
         return (modified_temporal + (10 - modified_temporal) * collateral_damage_potential) * target_distribution
 
-    def calculate_overall(self):
+    def calculate_overall(self, environment_vectors, temporal_vectors, not_defined='X'):
         # Calculate all scores (if needed) and the overall score
         self.score_base = self.calculate_base()
-        if self.vector['CDP'] != 'ND' or self.vector['TD'] != 'ND' or self.vector['CR'] != 'ND' or self.vector['IR'] != 'ND' or self.vector['AR'] != 'ND':
-            return self.calculate_environment()
-        if self.vector['E'] != 'ND' or self.vector['RL'] != 'ND' or self.vector['RC'] != 'ND':
-            return self.calculate_temporal(self.score_base)
+
+        for vector in environment_vectors:
+            if self.vector[vector] != not_defined:
+                return self.calculate_environment()
+
+        for vector in temporal_vectors:
+            if self.vector[vector] != not_defined:
+                return self.calculate_temporal(self.score_base)
+
         return self.score_base
 
     def __init__(self, vector):
@@ -84,7 +89,7 @@ class cvss2_vector:
         for vectors in vector_list:
             vectorsp = vectors.split(':')
             self.vector[vectorsp[0]] = vectorsp[1]
-        self.score_overall = max(0, min(10, self.calculate_overall()))
+        self.score_overall = max(0, min(10, self.calculate_overall(['CDP', 'TD', 'CR', 'IR', 'AR'], ['E', 'RL', 'RC'], 'ND')))
         if self.score_overall >= 7:
             self.score_name = "High"
         elif self.score_overall >= 4:
