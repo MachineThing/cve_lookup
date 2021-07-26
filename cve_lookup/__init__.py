@@ -1,5 +1,6 @@
+from cve_lookup.cve import cve
+
 def main():
-    from cve_lookup.cve import cve
     import argparse
 
     parser = argparse.ArgumentParser(description='Look up a CVE.')
