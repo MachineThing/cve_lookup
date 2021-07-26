@@ -31,15 +31,12 @@ class TestTemporalScore(unittest.TestCase): # Base and Temporal metrics only
         self.assertEqual(round(cvss2_vector('AV:N/AC:H/Au:S/C:P/I:N/A:C/E:U/RL:U/RC:UR').score_overall, 1), 4.5)
 
     def test_score_2(self):
-        self.assertEqual(round(cvss2_vector('(AV:N/AC:L/Au:N/C:C/I:C/A:C/E:U/RL:W/RC:UR)').score_overall, 1), 7.7)
-
-    def test_score_3(self):
         self.assertEqual(round(cvss2_vector('(AV:N/AC:L/Au:N/C:C/I:C/A:C/E:H/RL:U/RC:C)').score_overall, 1), 10.0)
 
-    def test_score_4(self):
+    def test_score_3(self):
         self.assertEqual(round(cvss2_vector('(AV:L/AC:H/Au:M/C:P/I:N/A:N/E:U/RL:ND/RC:UC)').score_overall, 1), 0.6)
 
-    def test_score_5(self): # Above but without "Not Defined" modifier
+    def test_score_4(self): # Above but without "Not Defined" modifier
         self.assertEqual(round(cvss2_vector('(AV:L/AC:H/Au:M/C:P/I:N/A:N/E:U/RC:UC)').score_overall, 1), 0.6)
 
 class TestEnvironmentalScore(unittest.TestCase): # Base and Environmental metrics only

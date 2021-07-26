@@ -1,6 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
-from . import vector
+from cve_lookup import vector
 
 class cve():
     id = None

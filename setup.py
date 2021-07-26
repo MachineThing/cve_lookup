@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import pathlib
 long_description = (pathlib.Path(__file__).parent/'README.md').read_text(encoding='utf-8')
 
@@ -11,7 +11,7 @@ setup(name='cve_lookup',
       author='MachineThing',
       #author_email='N/A',
       license='MIT',
-      packages=['cve_lookup'],
+      packages=find_packages(exclude=['tests']),
       zip_safe=False,
       classifiers=[
         'Operating System :: OS Independent',

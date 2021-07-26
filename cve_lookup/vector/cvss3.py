@@ -1,27 +1,11 @@
-# Equations from:
-# https://nvd.nist.gov/vuln-metrics/cvss/v2-calculator/equations
-# (As if 7/17/2021)
+from math import ceil
+from . import exceptions
+from . import cvss2
 
-class InvalidVectorValue(ValueError):
-    def __init__(self, vector, vector_list, message=None):
-        bad_value = vector_list[vector]
-        if message == None:
-            if type(bad_value) != str:
-                bad_value = type(bad_value).__name__
-            self.message = 'The \'{}\' vector cannot be \'{}\''.format(vector, bad_value)
-        else:
-            self.message = message
-        super().__init__(self.message)
+class cvss3_vector(cvss2.cvss2_vector):
+    _version = 3.0
 
-class cvss2_vector:
-    _version = 2
-
-    def score_case(self, vector, values):
-        # Basically a switch case statement, Python 3.10 implements something simular but this exists for compatibility purposes with older Python versions
-        for case in values:
-            if self.vector[vector] == case:
-                return values[case]
-        raise InvalidVectorValue(vector, self.vector)
+    round_up = lambda num : ceil(num*10)/10
 
     def calculate_base(self):
         # Base score calculation
@@ -83,36 +67,24 @@ class cvss2_vector:
         # Initialization
 
         # Initialize vector here
-        self.vector = {'AV':None, 'AC':None, 'Au':None, 'C':None, 'I':None, 'A':None, 'E':'ND', 'RL':'ND', 'RC':'ND', 'CDP':'ND', 'TD':'ND', 'CR':'ND', 'IR':'ND', 'AR':'ND'}
+        self.vector = {'AV':None, 'AC':None, 'PR':None, 'UI':None, 'S':None, 'C':None, 'I':None, 'A':None, 'E':'X', 'RL':'X', 'RC':'X', 'MAV':'X', 'MAC':'X', 'MPR':'X', 'MUI':'X', 'MS':'X', 'MC':'X', 'MI':'X', 'MA':'X', 'CR':'X', 'IR':'X', 'AR':'X'}
 
-        if vector[0] == '(':
-            self.vector_txt = vector[1:-1]
-        else:
-            self.vector_txt = vector
+        # We don't need to remove the CVSS part as it can be treated as a vector
+        self.vector_txt = vector
         vector_list = self.vector_txt.split('/')
         for vectors in vector_list:
             vectorsp = vectors.split(':')
             self.vector[vectorsp[0]] = vectorsp[1]
-        self.score_overall = max(0, min(10, self.calculate_overall()))
-        if self.score_overall >= 7:
-            self.score_name = "High"
-        elif self.score_overall >= 4:
-            self.score_name = "Medium"
-        else:
-            self.score_name = "Low"
 
-def gen_cvss(vector, cvss_version=None):
-    if cvss_version == None:
-        if vector[0] == '(':
-            cvss_version = 2.0
-        elif vector[7] == '0':
-            cvss_version = 3.0
-        elif vector[7] == '1':
-            cvss_version = 3.1
+
+        self.score_overall = max(0, min(10, self.calculate_overall()))
+        if self.score_overall >= 9.0:
+            self.score_name = "Critical"
+        elif self.score_name >= 7.0:
+            self.score_name = "High"
+        elif self.score_name >= 4.0:
+            self.score_name = "Medium"
+        elif self.score_name >= 0.1:
+            self.score_name = "Low"
         else:
-            raise ValueError('This CVSS version isn\'t valid or supported')
-    else:
-        if type(cvss_version) != float or type(cvss_version) != int:
-            raise TypeError('CVSS version must be a float!')
-        else:
-            cvss_version = float(cvss_version)
+            self.score_name = "None"
