@@ -43,10 +43,10 @@ class cvss3_vector(cvss2.cvss2_vector):
             return self.round_up(min(self.score_impact + self.score_exploitability, 10))
 
     def calculate_temporal(self, score_base):
-        exploitability = self.score_case('E', {'X':1, 'U':0.85, 'POC':0.9, 'F':0.95, 'H':1})
-        remediation_level = self.score_case('RL', {'X':1, 'OF':0.87, 'TF':0.9, 'W':0.95, 'U':1})
-        report_confidence = self.score_case('RC', {'X':1, 'UC':0.9, 'UR':0.95, 'C':1})
-        return score_base * exploitability * remediation_level * report_confidence
+        exploitability = self.score_case('E', {'X':1, 'U':0.91, 'P':0.94, 'F':0.97, 'H':1})
+        remediation_level = self.score_case('RL', {'X':1, 'O':0.95, 'T':0.96, 'W':0.97, 'U':1})
+        report_confidence = self.score_case('RC', {'X':1, 'U':0.92, 'R':0.96, 'C':1})
+        return self.round_up(score_base * exploitability * remediation_level * report_confidence)
 
     def calculate_environment(self):
         collateral_damage_potential = self.score_case('CDP', {'ND':0, 'N':0, 'L':0.1, 'LM':0.3, 'MH':0.4, 'H':0.5})
