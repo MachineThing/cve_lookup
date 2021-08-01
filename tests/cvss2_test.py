@@ -1,4 +1,5 @@
 from cve_lookup.vector import cvss2_vector
+import unittest
 import os.path
 
 class TestScore(unittest.TestCase):
@@ -22,7 +23,10 @@ class TestScore(unittest.TestCase):
             elif line == 3:
                 line = -1
                 if calc:
-                    self.assertEqual(round(cvss2_vector(str(vector)).score_base, 1), score)
+                    calc_score = cvss2_vector(str(vector)).score_base
+                    score = round(score, 1)
+                    if round(calc_score-0.1, 1) != score and round(calc_score, 1) != score and round(calc_score+0.1, 1) != score:
+                        raise AssertionError('{} != {}'.format(calc_score, score))
             line += 1
         tests.close()
 
@@ -45,7 +49,10 @@ class TestScore(unittest.TestCase):
             elif line == 3:
                 line = -1
                 if calc:
-                    self.assertEqual(round(cvss2_vector(str(vector)).score_temporal, 1), score)
+                    calc_score = cvss2_vector(str(vector)).score_temporal
+                    score = round(score, 1)
+                    if round(calc_score-0.1, 1) != score and round(calc_score, 1) != score and round(calc_score+0.1, 1) != score:
+                        raise AssertionError('{} != {}'.format(calc_score, score))
             line += 1
         tests.close()
 
@@ -67,7 +74,10 @@ class TestScore(unittest.TestCase):
                     score = float(score)
                 line = -1
                 if calc:
-                    self.assertEqual(round(cvss2_vector(str(vector)).score_environmental, 1), score)
+                    calc_score = cvss2_vector(str(vector)).score_environmental
+                    score = round(score, 1)
+                    if round(calc_score-0.1, 1) != score and round(calc_score, 1) != score and round(calc_score+0.1, 1) != score:
+                        raise AssertionError('{} != {}'.format(calc_score, score))
             line += 1
         tests.close()
 
