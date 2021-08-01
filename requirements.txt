@@ -2,6 +2,10 @@
 beautifulsoup4
 requests
 
+# Testing
+cvsslib
+tqdm
+
 # Setup
 setuptools
 build
