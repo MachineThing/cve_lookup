@@ -48,30 +48,49 @@ class cvss3_vector(cvss2.cvss2_vector):
         report_confidence = self.score_case('RC', {'X':1, 'U':0.92, 'R':0.96, 'C':1})
         return self.round_up(score_base * exploitability * remediation_level * report_confidence)
 
-    def calculate_environment(self):
-        collateral_damage_potential = self.score_case('CDP', {'ND':0, 'N':0, 'L':0.1, 'LM':0.3, 'MH':0.4, 'H':0.5})
-        target_distribution = self.score_case('TD', {'ND':1, 'N':0, 'L':0.25, 'M':0.75, 'H':1})
+    def calculate_environment(self, score_base):
+        scope = self.score_case('MS', {'X':False, 'U':False, 'C':True})
+        attack_vector = self.score_case('MAV', {'X':0.2, 'N':0.85, 'A':0.62, 'L':0.55, 'P':0.2})
+        attack_complex = self.score_case('MAC', {'X':0.44, 'L':0.77, 'H':0.44})
+        privileges_req = self.score_case('MPR', {'X':0.68, 'N':0.85, 'L':0.68, 'H':0.50})
+        user_interaction = self.score_case('MUI', {'X':0.62, 'N':0.85, 'R':0.62})
+        confidentality_impact = self.score_case('MC', {'X': 0.56, 'N':0, 'L':0.22, 'H':0.56})
+        integrity_impact = self.score_case('MI', {'X': 0.56, 'N':0, 'L':0.22, 'H':0.56})
+        availability_impact = self.score_case('MA', {'X':0.56, 'N':0, 'L':0.22, 'H':0.56})
+        confidentality_requirement = self.score_case('CR', {'X':1, 'L':0.5, 'M':1, 'H':1.5})
+        integrity_requirement = self.score_case('IR', {'X':1, 'L':0.5, 'M':1, 'H':1.5})
+        availability_requirement = self.score_case('AR', {'X':1, 'L':0.5, 'M':1, 'H':1.5})
 
-        confidentality_requirement = self.score_case('CR', {'ND':1, 'L':0.5, 'M':1, 'H':1.51})
-        integrity_requirement = self.score_case('IR', {'ND':1, 'L':0.5, 'M':1, 'H':1.51})
-        availability_requirement = self.score_case('AR', {'ND':1, 'L':0.5, 'M':1, 'H':1.51})
+        exploitability = self.score_case('E', {'X':1, 'U':0.91, 'P':0.94, 'F':0.97, 'H':1})
+        remediation_level = self.score_case('RL', {'X':1, 'O':0.95, 'T':0.96, 'W':0.97, 'U':1})
+        report_confidence = self.score_case('RC', {'X':1, 'U':0.92, 'R':0.96, 'C':1})
 
-        # The three variables below this comment is from the Base Score Metrics but are needed for this equation
-        confidentality_impact = self.score_case('C', {'N':0, 'P':0.275, 'C':0.660})
-        integrity_impact = self.score_case('I', {'N':0, 'P':0.275, 'C':0.660})
-        availability_impact = self.score_case('A', {'N':0, 'P':0.275, 'C':0.660})
+        exploitability = 8.22 * attack_vector * attack_complex * privileges_req * user_interaction
+        self.score_modified_impact_base = min(1 -
+                                                (1 - confidentality_impact * confidentality_requirement)
+                                                * (1 - integrity_impact * integrity_requirement)
+                                                * (1 - availability_impact * availability_requirement), 0.915)
 
-        self.modified_impact = min(10, 10.41 * (1 -
-                                                 (1 - confidentality_impact * confidentality_requirement)
-                                               * (1 - integrity_impact * integrity_requirement)
-                                               * (1- availability_impact * availability_requirement)))
+        if scope:
+            self.score_modified_impact = 7.52 * (self.score_modified_impact_base - 0.029) - 3.25 * (self.score_modified_impact_base - 0.02)**15
+        else:
+            self.score_modified_impact = 6.42 * self.score_modified_impact_base
 
-        # "modified_temporal" is the Temporal Score recomputed with the impact sub-equation replaced with the "modified_impact" variable
-        fimpact = 0
-        if self.score_impact != 0:
-            fimpact = 1.176
-        modified_temporal = self.calculate_temporal((.6*self.modified_impact+.4*self.score_exploitability-1.5)*fimpact)
-        return (modified_temporal + (10 - modified_temporal) * collateral_damage_potential) * target_distribution
+        if self.score_modified_impact <= 0:
+            return 0
+        elif scope:
+            return self.round_up(self.round_up(
+                                               min(self.score_modified_impact+exploitability, 10))
+                                               * exploitability
+                                               * remediation_level
+                                               * report_confidence)
+        else:
+            return self.round_up(self.round_up(
+                                               min(1.08 * (self.score_modified_impact+exploitability), 10))
+                                               * exploitability
+                                               * remediation_level
+                                               * report_confidence)
+        return 0
 
     def __init__(self, vector):
         # Initialization

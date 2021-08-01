@@ -36,7 +36,7 @@ class cvss2_vector:
         report_confidence = self.score_case('RC', {'ND':1, 'UC':0.9, 'UR':0.95, 'C':1})
         return score_base * exploitability * remediation_level * report_confidence
 
-    def calculate_environment(self):
+    def calculate_environment(self, score_base):
         collateral_damage_potential = self.score_case('CDP', {'ND':0, 'N':0, 'L':0.1, 'LM':0.3, 'MH':0.4, 'H':0.5})
         target_distribution = self.score_case('TD', {'ND':1, 'N':0, 'L':0.25, 'M':0.75, 'H':1})
 
@@ -67,7 +67,7 @@ class cvss2_vector:
 
         for vector in environment_vectors:
             if self.vector[vector] != not_defined:
-                return self.calculate_environment()
+                return self.calculate_environment(self.score_base)
 
         for vector in temporal_vectors:
             if self.vector[vector] != not_defined:
