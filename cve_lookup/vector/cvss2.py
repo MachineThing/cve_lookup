@@ -64,14 +64,16 @@ class cvss2_vector:
     def calculate_overall(self, environment_vectors, temporal_vectors, not_defined='X'):
         # Calculate all scores (if needed) and the overall score
         self.score_base = self.calculate_base()
+        self.score_temporal = self.calculate_temporal(self.score_base)
+        self.score_environmental = self.calculate_environment(self.score_base)
 
         for vector in environment_vectors:
             if self.vector[vector] != not_defined:
-                return self.calculate_environment(self.score_base)
+                return self.score_environmental
 
         for vector in temporal_vectors:
             if self.vector[vector] != not_defined:
-                return self.calculate_temporal(self.score_base)
+                return self.score_temporal
 
         return self.score_base
 
