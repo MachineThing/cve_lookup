@@ -26,7 +26,7 @@ class TestScore(unittest.TestCase):
                     calc_score = cvss3_vector(str(vector)).score_base
                     score = round(score, 1)
                     if round(calc_score-0.1, 1) != score and round(calc_score, 1) != score and round(calc_score+0.1, 1) != score:
-                        raise AssertionError('{} != {}'.format(calc_score, score))
+                        raise AssertionError('V: {}\n{} != {}'.format(str(vector), calc_score, score))
             line += 1
         tests.close()
 
@@ -52,7 +52,7 @@ class TestScore(unittest.TestCase):
                     calc_score = cvss3_vector(str(vector)).score_temporal
                     score = round(score, 1)
                     if round(calc_score-0.1, 1) != score and round(calc_score, 1) != score and round(calc_score+0.1, 1) != score:
-                        raise AssertionError('{} != {}'.format(calc_score, score))
+                        raise AssertionError('V: {}\n{} != {}'.format(str(vector), calc_score, score))
             line += 1
         tests.close()
 
@@ -77,7 +77,7 @@ class TestScore(unittest.TestCase):
                     calc_score = cvss3_vector(str(vector)).score_environmental
                     score = round(score, 1)
                     if round(calc_score-0.1, 1) != score and round(calc_score, 1) != score and round(calc_score+0.1, 1) != score:
-                        raise AssertionError('{} != {}'.format(calc_score, score))
+                        raise AssertionError('V: {}\n{} != {}'.format(str(vector), calc_score, score))
             line += 1
         tests.close()
 

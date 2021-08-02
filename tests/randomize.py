@@ -85,7 +85,7 @@ def gen_comp_vector(version, temporal=False, environmental=False, nond=False):
             n_vect += gen_vector('IR', values_ir_2, nond=nond)
             n_vect += gen_vector('AR', values_ar_2, nond=nond)
         n_vect = n_vect[:len(n_vect)-1]
-    elif version == cvsslib.cvss3 or version == cvsslib.cvss31:
+    elif version == cvsslib.cvss3:
         n_vect = ''
         n_vect += gen_vector('AV', values_av_3)
         n_vect += gen_vector('AC', values_ac_3)
@@ -118,7 +118,7 @@ def gen_comp_vector(version, temporal=False, environmental=False, nond=False):
     return txt
 
 print("Generating random vectors, this will take a while depending on how many vectors you are generating.")
-for version in (cvsslib.cvss2, cvsslib.cvss3, cvsslib.cvss31):
+for version in (cvsslib.cvss2, cvsslib.cvss3):
     file = None
     dir = None
     version_f = 0
@@ -130,10 +130,6 @@ for version in (cvsslib.cvss2, cvsslib.cvss3, cvsslib.cvss31):
         file = os.path.join(os.path.dirname(__file__), 'cvss3.vectors')
         dir = vectors_gen_30
         version_f = 3.0
-    elif version == cvsslib.cvss31:
-        file = os.path.join(os.path.dirname(__file__), 'cvss31.vectors')
-        dir = vectors_gen_31
-        version_f = 3.1
     for vect in tqdm(range(1, vectors+1), desc="Generating CVSS {} vectors".format(version_f)):
         vector = gen_comp_vector(version, temporal=bool(random.getrandbits(1)), environmental=bool(random.getrandbits(1)))
         dir.append(vector)
