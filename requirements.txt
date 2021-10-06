@@ -1,10 +1,7 @@
 # Dependencies
 beautifulsoup4
 requests
-
-# Testing
-cvsslib
-tqdm
+cvss
 
 # Setup
 setuptools

@@ -25,7 +25,8 @@ setup(name='cve_lookup',
       python_requires='>3.8,<4',
       install_requires=[
         'beautifulsoup4',
-        'requests'
+        'requests',
+        'cvss'
       ],
       entry_points={
         'console_scripts': [
