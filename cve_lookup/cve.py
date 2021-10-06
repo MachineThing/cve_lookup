@@ -10,10 +10,13 @@ class cve():
     cvss2 = None
 
     def _get_id(self, html, id, testid=True):
-        if testid:
-            return html.find(attrs={"data-testid":id}).string
-        else:
-            return html.find(attrs={"id":id}).string
+        try:
+            if testid:
+                return html.find(attrs={"data-testid":id}).string
+            else:
+                return html.find(attrs={"id":id}).string
+        except AttributeError:
+            return None
 
     def __init__(self, id):
         try:

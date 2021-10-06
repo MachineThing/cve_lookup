@@ -79,18 +79,15 @@ class cvss3_vector(cvss2.cvss2_vector):
         if self.score_modified_impact <= 0:
             return 0
         elif scope:
-            return self.round_up(self.round_up(
-                                               min(self.score_modified_impact+exploitability, 10))
+            return self.round_up(self.round_up(min(self.score_modified_impact+exploitability, 10))
                                                * exploitability
                                                * remediation_level
                                                * report_confidence)
         else:
-            return self.round_up(self.round_up(
-                                               min(1.08 * (self.score_modified_impact+exploitability), 10))
+            return self.round_up(self.round_up(min(1.08 * (self.score_modified_impact+exploitability), 10))
                                                * exploitability
                                                * remediation_level
                                                * report_confidence)
-        return 0
 
     def __init__(self, vector):
         # Initialization
