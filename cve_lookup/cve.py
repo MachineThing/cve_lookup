@@ -8,6 +8,7 @@ class cve():
     cvss2v = None
     cvss3 = None
     cvss2 = None
+    desc = None
 
     def _get_id(self, html, id, testid=True):
         try:
@@ -30,4 +31,5 @@ class cve():
         self.id = self._get_id(nvd_html, "page-header-vuln-id")
         self.cvss3v = self._get_id(nvd_html, "vuln-cvss3-nist-vector")
         self.cvss2v = self._get_id(nvd_html, "vuln-cvss2-panel-vector")
+        self.desc = self._get_id(nvd_html, "vuln-analysis-description")
         self.cvss2 = vector.cvss2_vector(self.cvss2v)
