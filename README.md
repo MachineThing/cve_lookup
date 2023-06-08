@@ -1,6 +1,8 @@
 # CVE Lookup
 [![Version](https://img.shields.io/pypi/v/cve-lookup)](https://pypi.org/project/cve_lookup) [![MIT License](https://img.shields.io/pypi/l/cve-lookup)](https://github.com/machinething/cve_lookup/blob/development/LICENSE.md) [![Language percent](https://img.shields.io/github/languages/top/Machinething/cve_lookup)](https://github.com/machinething/cve_lookup)
 
+**Note: This package is not maintained anymore, if you want to fork this then go right ahead.**
+
 Look up Common Vulnerabilities and Exposures (CVE for short) and get details about them.
 
 # How to use
