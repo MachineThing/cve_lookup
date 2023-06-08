@@ -11,6 +11,7 @@ def main():
     my_cve = cve(args.CVE[0])
     print(my_cve.id)
     print(my_cve.cvss3v)
-    print(my_cve.cvss2v)
     #print(round(my_cve.cvss3.score_overall, 1))
-    print(round(my_cve.cvss2.score_overall, 1), '\"{}\"'.format(my_cve.cvss2.score_name))
+    if my_cve.cvsss2v:
+        print(my_cve.cvss2v)
+        print(round(my_cve.cvss2.score_overall, 1), '\"{}\"'.format(my_cve.cvss2.score_name))
