@@ -32,4 +32,5 @@ class cve():
         self.cvss3v = self._get_id(nvd_html, "vuln-cvss3-nist-vector")
         self.cvss2v = self._get_id(nvd_html, "vuln-cvss2-panel-vector")
         self.desc = self._get_id(nvd_html, "vuln-analysis-description")
-        self.cvss2 = vector.cvss2_vector(self.cvss2v)
+        if self.cvss2v:
+            self.cvss2 = vector.cvss2_vector(self.cvss2v)
